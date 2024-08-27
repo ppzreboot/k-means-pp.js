@@ -1,0 +1,21 @@
+{
+  "name": "k-centers",
+  "version": "0.0.1",
+  "description": "JS k-means algorithm implementation.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "tsc & node --test",
+    "build": "tsc"
+  },
+  "keywords": [
+    "k-means",
+    "kmeans"
+  ],
+  "author": "ppz",
+  "license": "Unlicense",
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "typescript": "^5.5.4"
+  }
+}
