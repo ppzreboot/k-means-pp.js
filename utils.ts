@@ -22,3 +22,15 @@ function find_min(nums: number[]) {
 
   return min
 }
+
+export
+function calc_mean(dimension: number, points: Point[]) {
+  if (points.length === 0) throw Error('too few elements')
+
+  let mean = []
+  for(let i=0; i<dimension; i++)
+    mean[i] = points.reduce((sum, point) =>
+      sum += point[i]
+    , 0) / points.length
+  return mean
+}
