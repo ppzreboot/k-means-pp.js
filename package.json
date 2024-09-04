@@ -1,7 +1,7 @@
 {
-  "name": "k-centers",
+  "name": "k-means-pp",
   "version": "0.0.1",
-  "description": "JS k-means algorithm implementation.",
+  "description": "JS k-means++ algorithm implementation.",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -9,6 +9,7 @@
     "build": "tsc"
   },
   "keywords": [
+    "k-means++",
     "k-means",
     "kmeans"
   ],
