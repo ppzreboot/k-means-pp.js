@@ -3,7 +3,7 @@ import { find_min, calc_distance, calc_mean } from './utils.ts'
 import { calc_range } from './utils.ts'
 
 export
-function k_means(opts: I_opts, means: Point[] = [], range = calc_range(opts)): readonly Point[] {
+function k_means(opts: I_opts, means: Point[] = [], range: Range = calc_range(opts)): readonly Point[] {
   /* 中心点(means)不够时，补充随机的中心点 */
   while(means.length < opts.k)
     means.push(random_mean(range))
