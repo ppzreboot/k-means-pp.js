@@ -24,7 +24,7 @@ class KMPP {
 class Lazy<Value> {
   private value?: Value
   constructor(private make: () => Value) {}
-  get val() {
+  get val(): Value {
     return this.value ??= this.make()
   }
 }
