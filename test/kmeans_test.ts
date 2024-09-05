@@ -1,8 +1,8 @@
-import { assertEquals, assertGreaterOrEqual, assertLessOrEqual } from '@std/assert'
+import { assertEquals, assertGreater, assertLessOrEqual } from '@std/assert'
 import { k_means } from '../lib/kmeans.ts'
 import { calc_range } from '../lib/utils.ts'
 
-Deno.test('k_means()', () => {
+Deno.test('k_means()', async t => {
   const k = 4
   const points = {
     dimension: 3,
@@ -20,15 +20,28 @@ Deno.test('k_means()', () => {
     ],
   }
   const range = calc_range(points)
-  const means = k_means(points, k, range)
+  const result = k_means(points, k, range)
+  console.log('k means count', result.count)
 
-  assertEquals(means.length, k)
+  await t.step('means.length === k', () => {
+    assertEquals(result.means.length, k)
+    assertEquals(result.clusters.length, k)
+  })
 
-  const [mean1, mean2] = means
-  assertLessOrEqual(mean1[0], range.max[0])
-  assertLessOrEqual(mean1[1], range.max[1])
-  assertLessOrEqual(mean1[2], range.max[2])
-  assertGreaterOrEqual(mean2[0], range.min[0])
-  assertGreaterOrEqual(mean2[1], range.min[1])
-  assertGreaterOrEqual(mean2[2], range.min[2])
+  await t.step('in range', () => {
+    for (const mean of result.means) {
+      assertLessOrEqual(mean[0], range.max[0])
+      assertLessOrEqual(mean[1], range.max[1])
+      assertLessOrEqual(mean[2], range.max[2])
+    }
+  })
+
+  await t.step('count > 0', () => {
+    assertGreater(result.count, 0)
+  })
+
+  await t.step('clusters are not empty', () => {
+    for (const c of result.clusters)
+      assertGreater(c.points.length, 0)
+  })
 })

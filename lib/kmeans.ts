@@ -1,29 +1,31 @@
-import type { Point, I_points_data, Range } from './types.ts'
+import type { Point, Points, I_points_data, Range, Cluster } from './types.ts'
 import { find_min, calc_distance, calc_mean } from './utils.ts'
 
 export
-function k_means(points: I_points_data, k: number, range: Range, means: Point[] = []): readonly Point[] {
+function k_means(points: I_points_data, k: number, range: Range, means: Points = [], count = 0): Result {
+  count++
+
   /* 中心点(means)不够时，补充随机的中心点 */
-  while(means.length < k)
-    means.push(random_mean(range))
+  const enough_means = means.slice()
+  while(enough_means.length < k)
+    enough_means.push(random_mean(range))
 
   /* 收敛(converge)，求出新的中心点(means) */
-  const new_means = converge(points, means)
+  const result = converge(points, enough_means, count)
 
-  if (is_converged(points.dimension, means, new_means)) // 如果已经收敛(converged)了
-    return new_means
+  if (is_converged(points.dimension, enough_means, result.means)) // 如果已经收敛(converged)了
+    return result
   else // 否则递归
-    return k_means(points, k, range, new_means)
+    return k_means(points, k, range, result.means, count)
 }
 
 /**
  * 以给定的中心点，收敛（converge）一次。
  * @param opts
  * @param means - 给定的中心点
- * @returns 收敛后的新中心点
  */
 export
-function converge(points: I_points_data, means: Point[]): Point[] {
+function converge(points: I_points_data, means: Points, count: number): Result {
   const map = new Map<Point, Point[]>()
   for (const mean of means)
     map.set(mean, [])
@@ -38,11 +40,9 @@ function converge(points: I_points_data, means: Point[]): Point[] {
   }
 
   // 对各 cluster 计算其 mean
-  return Array.from(map.values())
-    .map(cluster =>
-      cluster.length && calc_mean(points.dimension, cluster)
-    )
-    .filter(mean => mean !== 0)
+  return new Result(count, points.dimension,
+    Array.from(map.values()).filter(cluster => cluster.length)
+  )
 }
 
 function random_mean(range: Range): Point {
@@ -54,7 +54,7 @@ function random_mean(range: Range): Point {
   return point
 }
 
-function is_converged(dimension: number, means_a: Point[], means_b: Point[]) {
+function is_converged(dimension: number, means_a: Points, means_b: Points) {
   const is_same_point = (a: Point, b: Point) => {
     for (let i=0; i<dimension; i++)
       if (a[i] !== b[i])
@@ -71,4 +71,24 @@ function is_converged(dimension: number, means_a: Point[], means_b: Point[]) {
       return false
 
   return true
+}
+
+/** The return type of `k_means()` and `k_means_pp()`. */
+export
+class Result {
+  clusters: readonly Cluster[]
+  means: readonly Point[]
+  constructor(
+    public readonly count: number,
+    dimension: number,
+    clusters: Point[][],
+  ) {
+    const means: Point[] = []
+    this.clusters = clusters.map(points => {
+      const mean = calc_mean(dimension, points)
+      means.push(mean)
+      return { mean, points }
+    })
+    this.means = means
+  }
 }

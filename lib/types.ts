@@ -14,3 +14,12 @@ interface I_points_data {
   /** 坐标数据 */
   data: readonly Point[]
 }
+
+export
+interface Cluster {
+  mean: Point
+  points: Points
+}
+
+export
+type Points = readonly Point[]

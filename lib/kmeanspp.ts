@@ -1,10 +1,10 @@
 import type { Point, I_points_data, Range } from './types.ts'
 import { find_min, calc_distance, find_max } from './utils.ts'
-import { k_means } from './kmeans.ts'
+import { k_means, type Result } from './kmeans.ts'
 
 /** 输入若干点，输出 k 个中心点。 */
 export
-function k_means_pp(points: I_points_data, k: number, range: Range): readonly Point[] {
+function k_means_pp(points: I_points_data, k: number, range: Range): Result {
   /* 1. 随机一个中心点 */
   const first_mean = points.data[
     Math.floor(points.data.length * Math.random())
@@ -18,6 +18,7 @@ function k_means_pp(points: I_points_data, k: number, range: Range): readonly Po
   return k_means(points, k, range, pp_means)
 }
 
+/** TODO: 远点算法不对 */
 function new_pp_mean(points: I_points_data, pp_means: Point[]): Point {
   /* 1. 各 point 距自己中心点的距离 */
   const point_distance = points.data.map(point => {

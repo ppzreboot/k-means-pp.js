@@ -1,4 +1,4 @@
-import type { I_points_data, Point } from './types.ts'
+import type { I_points_data, Point, Points } from './types.ts'
 
 /** Calc the distance between A and B */
 export
@@ -38,14 +38,15 @@ function find_max(nums: number[]) {
 }
 
 export
-function calc_mean(dimension: number, points: Point[]): Point {
-  if (points.length === 0) throw Error('too few elements')
+function calc_mean(dimension: number, cluster: Points): Point {
+  if (cluster.length === 0) throw Error('too few elements')
 
   const mean: number[] = [] // Point: readonly number[]
   for(let i=0; i<dimension; i++)
-    mean[i] = points.reduce((sum, point) =>
+    mean[i] = cluster.reduce((sum, point) =>
       sum += point[i]
-    , 0) / points.length
+    , 0) / cluster.length
+
   return mean
 }
 

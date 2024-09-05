@@ -1,2 +1,2 @@
-# k-means++
-k-means algorithm the js implementation.
+# kmeanspp.js
+A JS/TS implementation of the k-means algorithm.

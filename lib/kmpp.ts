@@ -1,6 +1,6 @@
-import type { Range, Point, I_points_data } from './types.ts'
+import type { Range, I_points_data } from './types.ts'
 import { calc_range } from './utils.ts'
-import { k_means } from './kmeans.ts'
+import { k_means, type Result } from './kmeans.ts'
 import { k_means_pp } from './kmeanspp.ts'
 
 export
@@ -12,11 +12,11 @@ class KMPP {
     this.range = new Lazy<Range>(() => calc_range(this.points))
   }
 
-  kmeans(k: number): readonly Point[] {
+  kmeans(k: number): Result {
     return k_means(this.points, k, this.range.val)
   }
 
-  kmeanspp(k: number): readonly Point[] {
+  kmeanspp(k: number): Result {
     return k_means_pp(this.points, k, this.range.val)
   }
 }
