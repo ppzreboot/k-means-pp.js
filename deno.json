@@ -1,6 +1,6 @@
 {
   "name": "@ppz/k-means-pp",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "exports": "./lib/mod.ts",
   "publish": {
     "include": [

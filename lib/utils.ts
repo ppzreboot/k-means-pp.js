@@ -1,4 +1,4 @@
-import type { Point, I_opts, Range } from './types.ts'
+import type { I_points_data, Point } from './types.ts'
 
 /** Calc the distance between A and B */
 export
@@ -41,7 +41,7 @@ export
 function calc_mean(dimension: number, points: Point[]): Point {
   if (points.length === 0) throw Error('too few elements')
 
-  const mean: Point = []
+  const mean: number[] = [] // Point: readonly number[]
   for(let i=0; i<dimension; i++)
     mean[i] = points.reduce((sum, point) =>
       sum += point[i]
@@ -50,18 +50,17 @@ function calc_mean(dimension: number, points: Point[]): Point {
 }
 
 export
-function calc_range(opts: I_opts): Range {
-  const min = new Array(opts.dimension).fill(Infinity)
-  const max = new Array(opts.dimension).fill(-Infinity)
+function calc_range(points: I_points_data) {
+  const min = new Array(points.dimension).fill(Infinity)
+  const max = new Array(points.dimension).fill(-Infinity)
 
-  for (const point of opts.points)
-    for (let i=0; i<opts.dimension; i++) {
+  for (const point of points.data)
+    for (let i=0; i<points.dimension; i++) {
       if (point[i] < min[i])
         min[i] = point[i]
       if (point[i] > max[i])
         max[i] = point[i]
   }
 
-  console.debug('calculated range', { min, max })
   return { min, max }
 }

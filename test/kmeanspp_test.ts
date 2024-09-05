@@ -2,30 +2,25 @@ import { assertEquals, assertGreaterOrEqual, assertLessOrEqual } from '@std/asse
 import { k_means_pp } from '../lib/kmeanspp.ts'
 import { calc_range } from '../lib/utils.ts'
 
-Deno.test('k_means_pp() length of result', () => {
+Deno.test('k_means_pp()', () => {
   const k = 4
-  const points = [
-    [1,2,3],
-    [0, 270, 103],
-    [3,4,5],
-    [0,0,0],
-    [100, 200, 1],
-    [0, 310, 120],
-    [10, 320, 90],
-    [100, 201, 3],
-    [0, 300, 100],
-    [1000, 2000, 1],
-  ]
-  const range = calc_range({
+  const points = {
     dimension: 3,
-    points,
-    k,
-  })
-  const means = k_means_pp({
-    dimension: 3,
-    points,
-    k,
-  })
+    data: [
+      [1,2,3],
+      [0, 270, 103],
+      [3,4,5],
+      [0,0,0],
+      [100, 200, 1],
+      [0, 310, 120],
+      [10, 320, 90],
+      [100, 201, 3],
+      [0, 300, 100],
+      [1000, 2000, 1],
+    ],
+  }
+  const range = calc_range(points)
+  const means = k_means_pp(points, k, range)
 
   assertEquals(means.length, k)
 
