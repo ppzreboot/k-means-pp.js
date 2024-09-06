@@ -1,5 +1,5 @@
 interface Props {
-  file: File
+  img: HTMLImageElement
 }
 
 export
