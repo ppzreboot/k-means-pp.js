@@ -25,7 +25,7 @@ await build({
     license: 'Unlicense',
     repository: {
       type: 'git',
-      url: 'https://github.com/ppzreboot/k-means-pp.js',
+      url: 'git+https://github.com/ppzreboot/k-means-pp.js.git',
     },
     bugs: {
       url: 'https://github.com/ppzreboot/k-means-pp.js/issues',
