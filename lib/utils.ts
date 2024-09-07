@@ -1,6 +1,17 @@
 import type { I_points_data, Point, Points } from './types.ts'
 
 export
+function unique_points(points: I_points_data) {
+  const map = new Map<string, Point>()
+  const set = new Set(points.data.map(point => {
+    const str = point.toString()
+    map.set(str, point)
+    return str
+  }))
+  return { map, set }
+}
+
+export
 function calc_squared_distance(dimension: number, A: Point, B: Point) {
   let sum = 0
   for(let i=0; i<dimension; i++)

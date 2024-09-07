@@ -23,6 +23,13 @@ function k_means(points: I_points_data, k: number, range: Range, means: Points =
   /* 收敛(converge)，求出新的中心点(means) */
   const result = converge(points, enough_means, count)
 
+  /**
+   * 注意这里的 enough_means 不能用 means 代替：
+   * 很多时候，明明有足够多的点，足够挑出 k 个 means，
+   * 但上一步补足的 mean 恰好离所有点都远，
+   * 收敛之后，刚补足的 mean 就被舍弃了，
+   * 此时并不能说明“不能挑出另一个 mean”
+   */
   if (is_converged(points.dimension, enough_means, result.means)) // 如果已经收敛(converged)了
     return result
   else // 否则递归

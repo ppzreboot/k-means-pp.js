@@ -1,5 +1,7 @@
-import { assertEquals, assertGreater, assertGreaterOrEqual, assertLessOrEqual } from '@std/assert'
+import { assertEquals, assertGreater, assertGreaterOrEqual, assertLessOrEqual, assertInstanceOf } from '@std/assert'
 import { KMPP } from '../lib/kmpp.ts'
+import type { Points } from '../lib/types.ts'
+import { Result } from '../lib/kmeans.ts'
 
 Deno.test('class KMPP', async t => {
   const k = 4
@@ -19,7 +21,11 @@ Deno.test('class KMPP', async t => {
     ],
   }
   const kmpp = new KMPP(points)
-  const result = kmpp.k_means_pp(k)
+  const result = kmpp.k_means_pp(k) as Result
+
+  await t.step('is instance of Result', () => {
+    assertInstanceOf(result, Result)
+  })
 
   await t.step('k === result.means', () => {
     assertEquals(result.means.length, k)
@@ -42,13 +48,52 @@ Deno.test('class KMPP', async t => {
   const step_name = 'kmeanspp is faster than kmeans'
   await t.step(step_name, () => {
     for (let i=0; i<10; i++) {
-      const slow = kmpp.k_means(k)
-      const fast = kmpp.k_means_pp(k)
+      const slow = kmpp.k_means(k) as Result
+      const fast = kmpp.k_means_pp(k) as Result
       console.log(step_name, 'round', i, {
         slow: slow.count,
         fast: fast.count,
       })
       assertLessOrEqual(fast.count, slow.count)
+    }
+  })
+})
+
+Deno.test('class KMPP with too few points', async t => {
+  const k = 4
+  const points = {
+    dimension: 3,
+    data: [
+      [1,2,3],
+      [1,2,3],
+      [1,2,3],
+      [1,2,3],
+      [0, 270, 103],
+      [0, 270, 103],
+      [0, 270, 103],
+      [0, 270, 103],
+      [0, 270, 103],
+      [3,4,5],
+    ],
+  }
+  const kmpp = new KMPP(points)
+  const result = kmpp.k_means_pp(k) as Points
+  // console.log(result)
+
+  await t.step('is instance of Points', () => {
+    assertInstanceOf(result, Array)
+  })
+
+  await t.step('k === result.means', () => {
+    assertEquals(result.length, 3)
+  })
+
+  await t.step('means is in range', () => {
+    for (const mean of result) {
+      for (let i=0; i<points.dimension; i++) {
+        assertLessOrEqual(mean[i], kmpp.range.val.max[i])
+        assertGreaterOrEqual(mean[i], kmpp.range.val.min[i])
+      }
     }
   })
 })

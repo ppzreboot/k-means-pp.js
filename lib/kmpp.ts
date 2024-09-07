@@ -1,5 +1,5 @@
-import type { Range, I_points_data } from './types.ts'
-import { calc_range } from './utils.ts'
+import type { Range, I_points_data, Points } from './types.ts'
+import { calc_range, unique_points } from './utils.ts'
 import { k_means, type Result } from './kmeans.ts'
 import { k_means_pp } from './kmeanspp.ts'
 
@@ -20,7 +20,10 @@ class KMPP {
    * @param {number} k - The number of clusters to create.
    * @returns {Result} The clustering result.
    */
-  k_means(k: number): Result {
+  k_means(k: number): Result | Points {
+    const unique = unique_points(this.points)
+    if (unique.set.size < k)
+      return Array.from(unique.map.values())
     return k_means(this.points, k, this.range.val)
   }
 
@@ -29,7 +32,10 @@ class KMPP {
    * @param {number} k - The number of clusters to create.
    * @returns {Result} The clustering result.
    */
-  k_means_pp(k: number): Result {
+  k_means_pp(k: number): Result | Points {
+    const unique = unique_points(this.points)
+    if (unique.set.size < k)
+      return Array.from(unique.map.values())
     return k_means_pp(this.points, k, this.range.val)
   }
 }
