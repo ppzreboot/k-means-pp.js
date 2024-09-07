@@ -1,3 +1,5 @@
+/* 这里仅用于定义“仅在编译时有效”的类型 */
+
 export
 interface Range {
   min: Point
