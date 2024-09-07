@@ -36,9 +36,9 @@ const kmpp = new KMPP({
   ],
 })
 
-const result1 = kmpp.k_means_pp(k)
+const result1 = kmpp.k_means_pp(8)
 console.log(result1.means)
 
-const result2 = kmpp.k_means(k)
+const result2 = kmpp.k_means(6)
 console.log(result2.means)
 ```
