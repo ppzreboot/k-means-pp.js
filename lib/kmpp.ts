@@ -12,11 +12,11 @@ class KMPP {
     this.range = new Lazy<Range>(() => calc_range(this.points))
   }
 
-  kmeans(k: number): Result {
+  k_means(k: number): Result {
     return k_means(this.points, k, this.range.val)
   }
 
-  kmeanspp(k: number): Result {
+  k_means_pp(k: number): Result {
     return k_means_pp(this.points, k, this.range.val)
   }
 }

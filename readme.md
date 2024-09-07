@@ -1,5 +1,9 @@
 # k-means-pp.js
-A JS/TS implementation of the k-means algorithm.
+A JS/TS implementation of the k-means and k-means++ clustering algorithm.
+
++ Implements both k-means and k-means++ algorithms
++ Supports multi-dimensional data points
++ Works in any JavaScript environment, including browsers, Node.js, Deno and more
 
 ## Installation
 ##### deno
@@ -13,11 +17,8 @@ npm install k-means-pp
 ```
 
 ## Usage
-
-Calculate k means of a given set of coordinates:
-
 ```ts
-import { kmeans } from 'k-means-pp'
+import { KMPP } from 'k-means-pp'
 
 const kmpp = new KMPP({
   dimension: 3,
@@ -35,9 +36,9 @@ const kmpp = new KMPP({
   ],
 })
 
-const result1 = kmpp.kmeanspp(k)
+const result1 = kmpp.k_means_pp(k)
 console.log(result1.means)
 
-const result2 = kmpp.kmeans(k)
+const result2 = kmpp.k_means(k)
 console.log(result2.means)
 ```

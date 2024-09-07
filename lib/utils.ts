@@ -1,12 +1,32 @@
 import type { I_points_data, Point, Points } from './types.ts'
 
-/** Calc the distance between A and B */
+/**
+ * Calculates the squared Euclidean distance between two points in n-dimensional space.
+ *
+ * @param dimension - The number of dimensions of the space.
+ * @param A - The first point, represented as an array of numbers.
+ * @param B - The second point, represented as an array of numbers.
+ * @returns The squared Euclidean distance between points A and B.
+ */
 export
-function calc_distance(dimension: number, A: Point, B: Point) {
+function calc_squared_distance(dimension: number, A: Point, B: Point) {
   let sum = 0
   for(let i=0; i<dimension; i++)
     sum += (A[i] - B[i]) **2
-  return Math.sqrt(sum)
+  return sum
+}
+
+/**
+ * Calculates the Euclidean distance between two points in n-dimensional space.
+ *
+ * @param dimension - The number of dimensions of the space.
+ * @param A - The first point, represented as an array of numbers.
+ * @param B - The second point, represented as an array of numbers.
+ * @returns The Euclidean distance between points A and B.
+ */
+export
+function calc_distance(dimension: number, A: Point, B: Point) {
+  return Math.sqrt(calc_squared_distance(dimension, A, B))
 }
 
 export

@@ -1,4 +1,3 @@
-// ex. scripts/build_npm.ts
 import { build, emptyDir } from '@deno/dnt'
 import pkg from './deno.json' with { type: 'json' }
 

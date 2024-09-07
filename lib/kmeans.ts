@@ -1,6 +1,16 @@
 import type { Point, Points, I_points_data, Range, Cluster } from './types.ts'
 import { find_min, calc_distance, calc_mean } from './utils.ts'
 
+/**
+ * Performs the K-means clustering algorithm on a set of points.
+ * 
+ * @param points - The input data points to be clustered.
+ * @param k - The number of clusters to form.
+ * @param range - The range of possible values for each dimension of the points.
+ * @param means - Optional initial cluster centroids. If not provided or insufficient, random centroids will be generated.
+ * @param count - Optional counter for tracking the number of iterations. Default is 0.
+ * @returns A Result object containing the final clusters, their means, and the number of iterations.
+ */
 export
 function k_means(points: I_points_data, k: number, range: Range, means: Points = [], count = 0): Result {
   count++
@@ -20,9 +30,13 @@ function k_means(points: I_points_data, k: number, range: Range, means: Points =
 }
 
 /**
- * 以给定的中心点，收敛（converge）一次。
- * @param opts
- * @param means - 给定的中心点
+ * Performs one iteration of the K-means convergence process.
+ * This function assigns each point to its nearest mean and then recalculates the means.
+ *
+ * @param points - The input data points to be clustered.
+ * @param means - The current cluster centroids.
+ * @param count - The current iteration count.
+ * @returns A Result object containing the updated clusters, their new means, and the iteration count.
  */
 export
 function converge(points: I_points_data, means: Points, count: number): Result {
@@ -73,11 +87,20 @@ function is_converged(dimension: number, means_a: Points, means_b: Points) {
   return true
 }
 
-/** The return type of `k_means()` and `k_means_pp()`. */
+/** Represents the result of a K-means clustering operation. */
 export
 class Result {
+  /** The final clusters, each containing a mean point and its associated points. */
   clusters: readonly Cluster[]
+  /** The mean points of all clusters. */
   means: readonly Point[]
+  /**
+   * Creates a new Result instance.
+   * 
+   * @param count - The number of iterations performed in the K-means algorithm.
+   * @param dimension - The dimension of the points in the clusters.
+   * @param clusters - An array of point arrays, each representing a cluster.
+   */
   constructor(
     public readonly count: number,
     dimension: number,

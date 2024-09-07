@@ -19,7 +19,7 @@ Deno.test('class KMPP', async t => {
     ],
   }
   const kmpp = new KMPP(points)
-  const result = kmpp.kmeanspp(k)
+  const result = kmpp.k_means_pp(k)
 
   await t.step('k === result.means', () => {
     assertEquals(result.means.length, k)
@@ -42,8 +42,8 @@ Deno.test('class KMPP', async t => {
   const step_name = 'kmeanspp is faster than kmeans'
   await t.step(step_name, () => {
     for (let i=0; i<10; i++) {
-      const slow = kmpp.kmeans(k)
-      const fast = kmpp.kmeanspp(k)
+      const slow = kmpp.k_means(k)
+      const fast = kmpp.k_means_pp(k)
       console.log(step_name, 'round', i, {
         slow: slow.count,
         fast: fast.count,
