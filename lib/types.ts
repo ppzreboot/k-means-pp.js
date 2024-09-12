@@ -10,6 +10,14 @@ export
 type Point = readonly number[]
 
 export
+interface Points_element {
+  /** 数据在数据集中的位置 */
+  index: number
+  /** 数据点 */
+  point: Point
+}
+
+export
 interface I_points_data {
   /** 维度数（1 维？2 维？3 维？） */
   dimension: number
@@ -20,7 +28,7 @@ interface I_points_data {
 export
 interface Cluster {
   mean: Point
-  points: Points
+  points: readonly Points_element[]
 }
 
 export

@@ -1,4 +1,4 @@
-import { assertEquals, assertGreater, assertLessOrEqual } from '@std/assert'
+import { assertEquals, assertGreater, assertGreaterOrEqual, assertLess, assertLessOrEqual } from '@std/assert'
 import { k_means } from '../lib/kmeans.ts'
 import { calc_range } from '../lib/utils.ts'
 
@@ -43,5 +43,15 @@ Deno.test('k_means()', async t => {
   await t.step('clusters are not empty', () => {
     for (const c of result.clusters)
       assertGreater(c.points.length, 0)
+  })
+
+
+  await t.step('cluster\'s points\' index', () => {
+    for (const cluster of result.clusters) {
+      for (const el of cluster.points) {
+        assertLess(el.index, points.data.length)
+        assertGreaterOrEqual(el.index, 0)
+      }
+    }
   })
 })

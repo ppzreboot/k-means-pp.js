@@ -1,4 +1,4 @@
-import type { Point, Points, I_points_data, Range, Cluster } from './types.ts'
+import type { Point, Points, I_points_data, Range, Cluster, Points_element } from './types.ts'
 import { find_min, calc_distance, calc_mean } from './utils.ts'
 
 /**
@@ -47,17 +47,18 @@ function k_means(points: I_points_data, k: number, range: Range, means: Points =
  */
 export
 function converge(points: I_points_data, means: Points, count: number): Result {
-  const map = new Map<Point, Point[]>()
+  const map = new Map<Point, Points_element[]>()
   for (const mean of means)
     map.set(mean, [])
 
   // 求出每个数据点 距离最近的 mean
-  for (const point of points.data) {
+  for (let i=0; i<points.data.length; i++) {
+    const point = points.data[i]
     const [nearest_index] = find_min(
       means.map(mean => calc_distance(points.dimension, mean, point))
     )
     // point 于是 属于 mean。在下一步中，同属一个 mean 的 points 共同构成 cluster。
-    map.get(means[nearest_index])!.push(point)
+    map.get(means[nearest_index])!.push({ index: i, point })
   }
 
   // 对各 cluster 计算其 mean
@@ -106,18 +107,18 @@ class Result {
    * 
    * @param count - The number of iterations performed in the K-means algorithm.
    * @param dimension - The dimension of the points in the clusters.
-   * @param clusters - An array of point arrays, each representing a cluster.
+   * @param clusters - An array of clusters.
    */
   constructor(
     public readonly count: number,
     dimension: number,
-    clusters: Point[][],
+    clusters: readonly Points_element[][],
   ) {
     const means: Point[] = []
-    this.clusters = clusters.map(points => {
-      const mean = calc_mean(dimension, points)
+    this.clusters = clusters.map(cluster => {
+      const mean = calc_mean(dimension, cluster.map(({ point }) => point))
       means.push(mean)
-      return { mean, points }
+      return { mean, points: cluster }
     })
     this.means = means
   }
