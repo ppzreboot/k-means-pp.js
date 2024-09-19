@@ -3,7 +3,7 @@ import { find_min, calc_distance, calc_mean } from './utils.ts'
 
 /**
  * Performs the K-means clustering algorithm on a set of points.
- * 
+ *
  * @param points - The input data points to be clustered.
  * @param k - The number of clusters to form.
  * @param range - The range of possible values for each dimension of the points.

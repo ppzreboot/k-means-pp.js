@@ -4,7 +4,7 @@ import { k_means, type Result } from './kmeans.ts'
 
 /**
  * Performs the K-means++ clustering algorithm on a set of points.
- * 
+ *
  * This function implements the initialization step of K-means++, which selects initial
  * centroids in a way that improves the final clustering result compared to standard K-means.
  *

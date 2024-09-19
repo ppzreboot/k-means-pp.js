@@ -18,7 +18,8 @@ npm install k-means-pp
 
 ## Usage
 ```ts
-import { KMPP } from 'k-means-pp'
+// import { KMPP } from '@ppz/k-means-pp' // deno
+import { KMPP } from 'k-means-pp' // nodejs
 
 const kmpp = new KMPP({
   dimension: 3,
@@ -36,9 +37,15 @@ const kmpp = new KMPP({
   ],
 })
 
-const result1 = kmpp.k_means_pp(8)
+const result1 = kmpp.cluster(8) // perform k-means++
 console.log(result1.means)
 
-const result2 = kmpp.k_means(6)
+const result2 = kmpp.cluster(6, 'k_means')
 console.log(result2.means)
 ```
+
+## API
++ [KMPP](https://jsr.io/@ppz/k-means-pp/doc/~/KMPP)
++ [k_means](https://jsr.io/@ppz/k-means-pp/doc/~/k_means)
++ [k_means_pp](https://jsr.io/@ppz/k-means-pp/doc/~/k_means_pp)
++ [types](https://jsr.io/@ppz/k-means-pp/doc)

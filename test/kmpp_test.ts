@@ -21,7 +21,7 @@ Deno.test('class KMPP', async t => {
     ],
   }
   const kmpp = new KMPP(points)
-  const result = kmpp.k_means_pp(k) as Result
+  const result = kmpp.cluster(k, 'k_means_pp') as Result
 
   await t.step('is instance of Result', () => {
     assertInstanceOf(result, Result)
@@ -48,8 +48,8 @@ Deno.test('class KMPP', async t => {
   const step_name = 'kmeanspp is faster than kmeans'
   await t.step(step_name, () => {
     for (let i=0; i<10; i++) {
-      const slow = kmpp.k_means(k) as Result
-      const fast = kmpp.k_means_pp(k) as Result
+      const slow = kmpp.cluster(k, 'k_means') as Result
+      const fast = kmpp.cluster(k) as Result
       console.log(step_name, 'round', i, {
         slow: slow.count,
         fast: fast.count,
@@ -77,7 +77,7 @@ Deno.test('class KMPP with too few points', async t => {
     ],
   }
   const kmpp = new KMPP(points)
-  const result = kmpp.k_means_pp(k) as Points
+  const result = kmpp.cluster(k, 'k_means_pp') as Points
   // console.log(result)
 
   await t.step('is instance of Points', () => {
