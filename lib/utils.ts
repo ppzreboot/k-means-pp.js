@@ -32,10 +32,10 @@ function calc_squared_distance(dimension: number, A: I_point, B: I_point) {
   return sum
 }
 
-export
-function calc_distance(dimension: number, A: I_point, B: I_point) {
-  return Math.sqrt(calc_squared_distance(dimension, A, B))
-}
+// export
+// function calc_distance(dimension: number, A: I_point, B: I_point) {
+  // return Math.sqrt(calc_squared_distance(dimension, A, B))
+// }
 
 export
 function find_min(nums: number[]) {
@@ -49,20 +49,6 @@ function find_min(nums: number[]) {
       min = [i, nums[i]]
 
   return min
-}
-
-export
-function find_max(nums: number[]) {
-  if (nums.length < 1)
-    throw Error('too few nums')
-
-  let max = [0, nums[0]] // first num
-
-  for(let i=1; i<nums.length; i++)
-    if (nums[i] > max[1])
-      max = [i, nums[i]]
-
-  return max
 }
 
 export
