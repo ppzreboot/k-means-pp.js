@@ -7,6 +7,9 @@ await build({
   entryPoints: ['./lib/mod.ts'],
   outDir: './npm',
   declaration: 'inline',
+  compilerOptions: {
+    lib: ['ESNext'],
+  },
   test: false, // don't emit test files
   scriptModule: false,
   shims: {

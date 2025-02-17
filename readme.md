@@ -6,6 +6,7 @@ A JS/TS implementation of the k-means and k-means++ clustering algorithm.
 + Works in any JavaScript environment, including browsers, Node.js, Deno and more
 
 ## Installation
+
 ##### deno
 ``` bash
 deno add @ppz/k-means-pp
@@ -18,34 +19,47 @@ npm install k-means-pp
 
 ## Usage
 ```ts
-// import { KMPP } from '@ppz/k-means-pp' // deno
-import { KMPP } from 'k-means-pp' // nodejs
+// import { KMPP } from '@ppz/k-means-pp' // install from deno
+import { k_means_pp, k_means } from 'k-means-pp' // install from npm
 
-const kmpp = new KMPP({
-  dimension: 3,
-  data: [
-    [1,2,3],
-    [0, 270, 103],
-    [3,4,5],
-    [0,0,0],
-    [100, 200, 1],
-    [0, 310, 120],
-    [10, 320, 90],
-    [100, 201, 3],
-    [0, 300, 100],
-    [1000, 2000, 1],
-  ],
-})
+const dimension = 3
+const points = [
+  [1,2,3],
+  [0, 270, 103],
+  [3,4,5],
+  [0,0,0],
+  [100, 200, 1],
+  [0, 310, 120],
+  [10, 320, 90],
+  [100, 201, 3],
+  [0, 300, 100],
+  [1000, 2000, 1],
+]
 
-const result1 = kmpp.cluster(8) // perform k-means++
-console.log(result1.means)
+const range = calc_range(dimension, points)
 
-const result2 = kmpp.cluster(6, 'k_means')
-console.log(result2.means)
+const [clusters, count] = k_means_pp(dimension, points, 8, range)
+console.log(clusters.map(c => c.mean), count)
+
+const [clusters_pp, count_pp] = k_means(dimension, points, 8, range)
+console.log(clusters_pp.map(c => c.mean), count_pp)
 ```
 
 ## API
-+ [KMPP](https://jsr.io/@ppz/k-means-pp/doc/~/KMPP)
 + [k_means](https://jsr.io/@ppz/k-means-pp/doc/~/k_means)
 + [k_means_pp](https://jsr.io/@ppz/k-means-pp/doc/~/k_means_pp)
 + [types](https://jsr.io/@ppz/k-means-pp/doc)
+
+## DEV
+
+##### test
+``` bash
+deno test
+```
+
+##### build for npm
+``` bash
+deno task npm
+cd npm
+npm publish --access public
+```

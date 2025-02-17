@@ -1,18 +1,31 @@
-import type { I_points_data, Point, Points } from './types.ts'
+import type { I_point } from './types.ts'
 
 export
-function unique_points(points: I_points_data) {
-  const map = new Map<string, Point>()
-  const set = new Set(points.data.map(point => {
-    const str = point.toString()
-    map.set(str, point)
-    return str
-  }))
-  return { map, set }
+function is_same_point(d: number, A: I_point, B: I_point) {
+  for (let i=0; i<d; i++)
+    if (A[i] !== B[i])
+      return false
+  return true
 }
 
 export
-function calc_squared_distance(dimension: number, A: Point, B: Point) {
+function has_enough_unique_points(d: number, points: I_point[], k: number): [true]
+| [false, I_point[]] {
+  const unique_list: I_point[] = []
+  for (const point of points) {
+    if (unique_list.every(unique_point =>
+      !is_same_point(d, unique_point, point)
+    ))
+      unique_list.push(point)
+
+    if (unique_list.length >= k)
+      return [true]
+  }
+  return [false, unique_list]
+}
+
+export
+function calc_squared_distance(dimension: number, A: I_point, B: I_point) {
   let sum = 0
   for(let i=0; i<dimension; i++)
     sum += (A[i] - B[i]) **2
@@ -20,7 +33,7 @@ function calc_squared_distance(dimension: number, A: Point, B: Point) {
 }
 
 export
-function calc_distance(dimension: number, A: Point, B: Point) {
+function calc_distance(dimension: number, A: I_point, B: I_point) {
   return Math.sqrt(calc_squared_distance(dimension, A, B))
 }
 
@@ -53,25 +66,27 @@ function find_max(nums: number[]) {
 }
 
 export
-function calc_mean(dimension: number, cluster: Points): Point {
-  if (cluster.length === 0) throw Error('too few elements')
+function calc_mean(dimension: number, cluster: I_point[]): [true, I_point]
+| [false, 'too few elements'] {
+  if (cluster.length === 0)
+    return [false, 'too few elements']
 
-  const mean: number[] = [] // Point: readonly number[]
+  const mean: number[] = []
   for(let i=0; i<dimension; i++)
     mean[i] = cluster.reduce((sum, point) =>
       sum += point[i]
     , 0) / cluster.length
 
-  return mean
+  return [true, mean]
 }
 
 export
-function calc_range(points: I_points_data) {
-  const min = new Array(points.dimension).fill(Infinity)
-  const max = new Array(points.dimension).fill(-Infinity)
+function calc_range(d: number, points: I_point[]) {
+  const min = new Array(d).fill(Infinity)
+  const max = new Array(d).fill(-Infinity)
 
-  for (const point of points.data)
-    for (let i=0; i<points.dimension; i++) {
+  for (const point of points)
+    for (let i=0; i<d; i++) {
       if (point[i] < min[i])
         min[i] = point[i]
       if (point[i] > max[i])

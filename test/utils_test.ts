@@ -27,31 +27,31 @@ Deno.test('find_min', () => {
 
 Deno.test('calc_mean', () => {
   assertEquals(
-    calc_mean(1, [[0], [1]]),
+    calc_mean(1, [[0], [1]])[1],
     [.5],
   )
   assertEquals(
-    calc_mean(2, [[0, 1], [1, 0]]),
+    calc_mean(2, [[0, 1], [1, 0]])[1],
     [0.5, 0.5],
   )
   assertEquals(
-    calc_mean(2, [[0, 1]]),
+    calc_mean(2, [[0, 1]])[1],
     [0, 1],
   )
   assertEquals(
-    calc_mean(2, [[1, 1], [2, 2], [3, 3]]),
+    calc_mean(2, [[1, 1], [2, 2], [3, 3]])[1],
     [2, 2],
   )
   assertEquals(
     calc_mean(3, [
       [0, 0, 0], [1, 1, 1], [2, 2, 2]
-    ]),
+    ])[1],
     [1, 1, 1],
   )
   assertEquals(
     calc_mean(3, [
       [0, 0, 0], [1, 1, 1]
-    ]),
+    ])[1],
     [0.5, 0.5, 0.5],
   )
 })

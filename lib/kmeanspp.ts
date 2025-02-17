@@ -1,43 +1,41 @@
-import type { Point, I_points_data, Range } from './types.ts'
-import { find_min, calc_squared_distance } from './utils.ts'
-import { k_means, type Result } from './kmeans.ts'
+import type { I_cluster, I_point } from './types.ts'
+import { find_min, calc_squared_distance, calc_range } from './utils.ts'
+import { k_means } from './kmeans.ts'
 
 /**
- * Performs the K-means++ clustering algorithm on a set of points.
- *
- * This function implements the initialization step of K-means++, which selects initial
- * centroids in a way that improves the final clustering result compared to standard K-means.
- *
- * @param points - The input data points to be clustered.
- * @param k - The number of clusters to form.
- * @param range - The range of possible values for each dimension of the points.
- * @returns A Result object containing the final clusters, their means, and the number of iterations.
+ * @param d dimension of the points
+ * @param points data points: Check points with `has_enough_unique_points` before.
+ * @param k number of means
+ * @param range boundaries of the data space
+ * @returns [the k clusters, the count of iterations]
  */
 export
-function k_means_pp(points: I_points_data, k: number, range: Range): Result {
+function k_means_pp(d: number, points: I_point[], k: number,
+  range = calc_range(d, points)
+): [I_cluster[], number] {
   /* 1. 随机一个中心点 */
-  const first_mean = points.data[
-    Math.floor(points.data.length * Math.random())
+  const first_mean = points[
+    Math.floor(points.length * Math.random())
   ]
 
   /* 2. k-means++ 最初的 means */
   const pp_means = [first_mean]
   while(pp_means.length < k)
-    pp_means.push(new_pp_mean(points, pp_means))
+    pp_means.push(new_pp_mean(d, points, pp_means))
 
-  return k_means(points, k, range, pp_means)
+  return k_means(d, points, k, range, pp_means)
 }
 
-function new_pp_mean(points: I_points_data, pp_means: Point[]): Point {
-  /* 1. 各 point 距各 mean 的距离 */
-  const point_squared_distances = points.data.map(point => {
+function new_pp_mean(d: number, points: I_point[], pp_means: I_point[]): I_point {
+  // 1. 各 point 距各 mean 的距离
+  const point_squared_distances = points.map(point => {
     const distances = pp_means.map(
-      mean => calc_squared_distance(points.dimension, mean, point)
+      mean => calc_squared_distance(d, mean, point)
     )
     return find_min(distances)[1]
   })
 
-  /* 2. 各 point 距各 mean 的距离总和 */
+  // 2. 各 point 距各 mean 的距离总和
   const total_squared_distance = point_squared_distances
     .reduce((sum, b) => sum + b, 0)
 
@@ -46,13 +44,14 @@ function new_pp_mean(points: I_points_data, pp_means: Point[]): Point {
 
   // 4. Select the new centroid
   let accumulator = 0
-  for (let i = 0; i < points.data.length; i++) {
+  for (let i = 0; i < points.length; i++) {
     accumulator += point_squared_distances[i]
     if (accumulator >= threshold) {
-      return points.data[i]
+      // console.debug(`new pp mean at ${i}/${points.length}`)
+      return points[i]
     }
   }
 
   // Fallback (should rarely happen due to floating-point precision)
-  return points.data[points.data.length - 1]
+  return points.at(-1)!
 }

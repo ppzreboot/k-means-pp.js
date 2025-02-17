@@ -1,75 +1,76 @@
-import type { Point, Points, I_points_data, Range, Cluster, Points_element } from './types.ts'
-import { find_min, calc_distance, calc_mean } from './utils.ts'
+import type { I_cluster, I_point, I_range } from './types.ts'
+import { find_min, is_same_point, calc_squared_distance, calc_mean, calc_range } from './utils.ts'
 
 /**
- * Performs the K-means clustering algorithm on a set of points.
- *
- * @param points - The input data points to be clustered.
- * @param k - The number of clusters to form.
- * @param range - The range of possible values for each dimension of the points.
- * @param means - Optional initial cluster centroids. If not provided or insufficient, random centroids will be generated.
- * @param count - Optional counter for tracking the number of iterations. Default is 0.
- * @returns A Result object containing the final clusters, their means, and the number of iterations.
+ * @param d dimension of the points
+ * @param points data points: Check points with `has_enough_unique_points` before.
+ * @param k number of means
+ * @param range boundaries of the data space
+ * @param means initial means
+ * @returns [the k clusters, the count of iterations]
  */
 export
-function k_means(points: I_points_data, k: number, range: Range, means: Points = [], count = 0): Result {
+function k_means(
+  d: number, points: I_point[], k: number,
+  range = calc_range(d, points),
+  means: I_point[] = [],
+): [I_cluster[], number] {
+  let count = 0
   while (true) {
     count++
 
-    /* 中心点(means)不够时，补充随机的中心点 */
-    const enough_means = means.slice()
-    while (enough_means.length < k)
-      enough_means.push(random_mean(range))
+    const old_means = means.slice()
+    while (old_means.length < k) // 中心点(means)不够时，补充随机的中心点
+      old_means.push(random_mean(range))
 
     /* 收敛(converge)，求出新的中心点(means) */
-    const result = converge(points, enough_means, count)
+    const clusters = converge(d, points, old_means)
+    const new_means = clusters.map(cluster => cluster.mean)
 
     /**
-     * 注意这里的 enough_means 不能用 means 代替：
+     * 注意这里的 old_means 不能用 means 代替：
      * 很多时候，明明有足够多的点，足够挑出 k 个 means，
      * 但上一步补足的 mean 恰好离所有点都远，
      * 收敛之后，刚补足的 mean 就被舍弃了，
      * 此时并不能说明“不能挑出另一个 mean”
      */
-    if (is_converged(points.dimension, enough_means, result.means)) // 如果已经收敛(converged)了
-      return result
+    if (is_converged(d, old_means, new_means)) // 如果已经收敛(converged)了
+      return [clusters, count]
     else
-      means = result.means
+      means = new_means
   }
 }
 
-/**
- * Performs one iteration of the K-means convergence process.
- * This function assigns each point to its nearest mean and then recalculates the means.
- *
- * @param points - The input data points to be clustered.
- * @param means - The current cluster centroids.
- * @param count - The current iteration count.
- * @returns A Result object containing the updated clusters, their new means, and the iteration count.
- */
-export
-function converge(points: I_points_data, means: Points, count: number): Result {
-  const map = new Map<Point, Points_element[]>()
-  for (const mean of means)
-    map.set(mean, [])
+/** 接收 old means，计算并返回 new means */
+function converge(d: number, points: I_point[], means: I_point[]): I_cluster[] {
+  const map = new Map<I_point, number[]>( // mean => index
+    means.map(m => [m, []])
+  )
 
   // 求出每个数据点 距离最近的 mean
-  for (let i=0; i<points.data.length; i++) {
-    const point = points.data[i]
-    const [nearest_index] = find_min(
-      means.map(mean => calc_distance(points.dimension, mean, point))
+  for (let i=0; i<points.length; i++) {
+    const point = points[i]
+    const [shortest] = find_min(
+      means.map(mean => calc_squared_distance(d, mean, point))
     )
     // point 于是 属于 mean。在下一步中，同属一个 mean 的 points 共同构成 cluster。
-    map.get(means[nearest_index])!.push({ index: i, point })
+    map.get(means[shortest])!.push(i)
   }
 
-  // 对各 cluster 计算其 mean
-  return new Result(count, points.dimension,
-    Array.from(map.values()).filter(cluster => cluster.length)
-  )
+  return Array.from(map.values())
+    .map((indices) => {
+      if (indices.length === 0)
+        return null
+
+      const [ok, mean] = calc_mean(d, indices.map(i => points[i]))
+      if (!ok) throw Error('Unkown Error')
+
+      return { indices, mean }
+    })
+    .filter(cluster => cluster !== null)
 }
 
-function random_mean(range: Range): Point {
+function random_mean(range: I_range): I_point {
   const point: number[] = []
   for (let i=0; i<range.min.length; i++) {
     const span = range.max[i] - range.min[i]
@@ -78,50 +79,14 @@ function random_mean(range: Range): Point {
   return point
 }
 
-function is_converged(dimension: number, means_a: Points, means_b: Points) {
-  const is_same_point = (a: Point, b: Point) => {
-    for (let i=0; i<dimension; i++)
-      if (a[i] !== b[i])
-        return false
-    return true
-  }
-
+function is_converged(d: number, means_a: I_point[], means_b: I_point[]) {
   const length = means_a.length
   if (length !== means_b.length)
     return false
 
   for (let i=0; i<length; i++)
-    if (!is_same_point(means_a[i], means_b[i]))
+    if (!is_same_point(d, means_a[i], means_b[i]))
       return false
 
   return true
-}
-
-/** Represents the result of a K-means clustering operation. */
-export
-class Result {
-  /** The final clusters, each containing a mean point and its associated points. */
-  clusters: readonly Cluster[]
-  /** The mean points of all clusters. */
-  means: readonly Point[]
-  /**
-   * Creates a new Result instance.
-   * 
-   * @param count - The number of iterations performed in the K-means algorithm.
-   * @param dimension - The dimension of the points in the clusters.
-   * @param clusters - An array of clusters.
-   */
-  constructor(
-    public readonly count: number,
-    dimension: number,
-    clusters: readonly Points_element[][],
-  ) {
-    const means: Point[] = []
-    this.clusters = clusters.map(cluster => {
-      const mean = calc_mean(dimension, cluster.map(({ point }) => point))
-      means.push(mean)
-      return { mean, points: cluster }
-    })
-    this.means = means
-  }
 }
