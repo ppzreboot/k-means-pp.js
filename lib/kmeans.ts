@@ -12,7 +12,7 @@ import { find_min, is_same_point, calc_squared_distance, calc_mean, calc_range }
 export
 function k_means(
   d: number, points: I_point[], k: number,
-  range = calc_range(d, points),
+  range: I_range = calc_range(d, points),
   means: I_point[] = [],
 ): [I_cluster[], number] {
   let count = 0

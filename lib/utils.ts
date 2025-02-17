@@ -1,4 +1,4 @@
-import type { I_point } from './types.ts'
+import type { I_point, I_range } from './types.ts'
 
 export
 function is_same_point(d: number, A: I_point, B: I_point) {
@@ -81,7 +81,7 @@ function calc_mean(dimension: number, cluster: I_point[]): [true, I_point]
 }
 
 export
-function calc_range(d: number, points: I_point[]) {
+function calc_range(d: number, points: I_point[]): I_range {
   const min = new Array(d).fill(Infinity)
   const max = new Array(d).fill(-Infinity)
 

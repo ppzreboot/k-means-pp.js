@@ -1,4 +1,4 @@
-import type { I_cluster, I_point } from './types.ts'
+import type { I_cluster, I_point, I_range } from './types.ts'
 import { find_min, calc_squared_distance, calc_range } from './utils.ts'
 import { k_means } from './kmeans.ts'
 
@@ -11,7 +11,7 @@ import { k_means } from './kmeans.ts'
  */
 export
 function k_means_pp(d: number, points: I_point[], k: number,
-  range = calc_range(d, points)
+  range: I_range = calc_range(d, points)
 ): [I_cluster[], number] {
   /* 1. 随机一个中心点 */
   const first_mean = points[
