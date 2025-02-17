@@ -1,7 +1,7 @@
 import type { I_point, I_range } from './types.ts'
 
 export
-function is_same_point(d: number, A: I_point, B: I_point) {
+function is_same_point(d: number, A: I_point, B: I_point): boolean {
   for (let i=0; i<d; i++)
     if (A[i] !== B[i])
       return false
