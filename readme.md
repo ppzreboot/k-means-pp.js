@@ -18,8 +18,11 @@ npm install k-means-pp
 ```
 
 ## Usage
+
+##### basic
+
 ```ts
-// import { KMPP } from '@ppz/k-means-pp' // install from deno
+// import { k_means_pp, k_means } from '@ppz/k-means-pp' // install from deno
 import { k_means_pp, k_means } from 'k-means-pp' // install from npm
 
 const dimension = 3
@@ -38,11 +41,50 @@ const points = [
 
 const range = calc_range(dimension, points)
 
-const [clusters, count] = k_means_pp(dimension, points, 8, range)
+const [clusters, count] = k_means_pp({
+  dimension,
+  points,
+  k: 8,
+  range,
+})
 console.log(clusters.map(c => c.mean), count)
 
-const [clusters_pp, count_pp] = k_means(dimension, points, 8, range)
+const [clusters_pp, count_pp] = k_means({
+  dimension,
+  points,
+  k: 8,
+  range,
+})
 console.log(clusters_pp.map(c => c.mean), count_pp)
+```
+
+##### customize distance quantification
+
+``` ts
+import { k_means_pp } from 'k-means-pp' // install from npm
+
+const dimension = 3
+const points = [
+  [1,2,3],
+  [0, 270, 103],
+  [3,4,5],
+  [0,0,0],
+  [100, 200, 1],
+  // ...
+]
+
+const [clusters, count] = k_means_pp({
+  dimension,
+  points,
+  k: 3,
+  range,
+  quantify(dimension, a_point, b_point) {
+    let squared = 0
+    for(let i=0; i<dimension; i++)
+      squared += (a_point[i] - b_point[i]) **2
+    return squared
+  },
+})
 ```
 
 ## API
