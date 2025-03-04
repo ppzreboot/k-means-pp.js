@@ -7,4 +7,5 @@ export {
   calc_range,
   is_same_point,
   has_enough_unique_points,
+  calc_distance,
 } from './utils.ts'

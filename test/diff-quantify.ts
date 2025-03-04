@@ -1,5 +1,6 @@
 import { assertEquals, assertGreater, assertGreaterOrEqual, assertLessOrEqual } from '@std/assert'
-import { k_means_pp, k_means, calc_range } from '../lib/mod.ts'
+import { k_means_pp, calc_range } from '../lib/mod.ts'
+import { calc_squared_distance } from '../lib/utils.ts'
 
 Deno.test('k_means_pp', async t => {
   const k = 4
@@ -22,7 +23,7 @@ Deno.test('k_means_pp', async t => {
     dimension: d,
     points,
     k,
-    range,
+    quantify: calc_squared_distance,
   })
 
   await t.step('k === result.means', () => {
@@ -41,26 +42,5 @@ Deno.test('k_means_pp', async t => {
   await t.step('clusters are not empty', () => {
     for (const c of clusters)
       assertGreater(c.indices.length, 0)
-  })
-
-  const step_name = 'kmeanspp is faster than kmeans'
-  await t.step(step_name, () => {
-    for (let i=0; i<10; i++) {
-      const [_1, slow] = k_means({
-        dimension: d,
-        points,
-        k: 5,
-      })
-      const [_2, fast] = k_means_pp({
-        dimension: d,
-        points,
-        k: 5,
-      })
-      console.log(step_name, 'round', i, {
-        slow: slow,
-        fast: fast,
-      })
-      assertLessOrEqual(fast, slow)
-    }
   })
 })

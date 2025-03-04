@@ -1,6 +1,5 @@
 import { assertEquals, assertGreater, assertGreaterOrEqual, assertLess, assertLessOrEqual } from '@std/assert'
-import { k_means } from '../lib/kmeans.ts'
-import { calc_range } from '../lib/utils.ts'
+import { k_means, calc_range } from '../lib/mod.ts'
 
 Deno.test('k_means()', async t => {
   const d = 3

@@ -1,5 +1,5 @@
 import type { I_cluster, I_point, I_range, I_quantify } from './types.ts'
-import { find_min, calc_squared_distance, calc_range } from './utils.ts'
+import { find_min, calc_distance, calc_range } from './utils.ts'
 import { k_means } from './kmeans.ts'
 
 export
@@ -24,7 +24,7 @@ export
 function k_means_pp(opts: I_k_means_pp_opts): [I_cluster[], number] {
   let { dimension, points, k, range, quantify } = opts
   range ??= calc_range(dimension, points)
-  quantify ??= calc_squared_distance
+  quantify ??= calc_distance
 
   /* 1. 随机一个中心点 */
   const first_mean = points[

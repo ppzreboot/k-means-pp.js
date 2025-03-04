@@ -1,5 +1,5 @@
 import type { I_cluster, I_point, I_quantify, I_range } from './types.ts'
-import { find_min, is_same_point, calc_squared_distance, calc_mean, calc_range } from './utils.ts'
+import { find_min, is_same_point, calc_distance, calc_mean, calc_range } from './utils.ts'
 
 export
 interface I_k_means_opts {
@@ -26,7 +26,7 @@ function k_means(opts: I_k_means_opts): [I_cluster[], number] {
   let { dimension, points, k, range, means, quantify } = opts
   range ??= calc_range(dimension, points)
   means ??= []
-  quantify ??= calc_squared_distance
+  quantify ??= calc_distance
 
   let count = 0
   while (true) {

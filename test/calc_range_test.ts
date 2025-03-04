@@ -1,5 +1,5 @@
 import { assertEquals } from '@std/assert'
-import { calc_range } from '../lib/utils.ts'
+import { calc_range } from '../lib/mod.ts'
 
 Deno.test('calc_range()', () => {
   assertEquals(
