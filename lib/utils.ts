@@ -32,11 +32,6 @@ function calc_squared_distance(dimension: number, A: I_point, B: I_point) {
   return sum
 }
 
-// export
-// function calc_distance(dimension: number, A: I_point, B: I_point) {
-  // return Math.sqrt(calc_squared_distance(dimension, A, B))
-// }
-
 export
 function find_min(nums: number[]) {
   if (nums.length < 1)

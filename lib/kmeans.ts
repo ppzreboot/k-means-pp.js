@@ -14,7 +14,7 @@ interface I_k_means_opts {
   /** initial means */
   means?: I_point[]
   /** algorithm to quantify difference of points (default to Euclidian Distance) */
-  quantify: I_quantify
+  quantify?: I_quantify
 }
 
 /**

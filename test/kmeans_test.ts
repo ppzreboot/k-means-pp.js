@@ -19,7 +19,11 @@ Deno.test('k_means()', async t => {
   ]
   const range = calc_range(d, points)
 
-  const [clusters, count] = k_means(d, points, k)
+  const [clusters, count] = k_means({
+    dimension: d,
+    points,
+    k,
+  })
   console.log('k means count', count)
 
   await t.step('means.length === k', () => {

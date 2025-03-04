@@ -1,4 +1,4 @@
-import { assertEquals, assertGreater, assertGreaterOrEqual, assertLessOrEqual, assertInstanceOf } from '@std/assert'
+import { assertEquals, assertGreater, assertGreaterOrEqual, assertLessOrEqual } from '@std/assert'
 import { k_means_pp } from '../lib/kmeanspp.ts'
 import { calc_range } from "../lib/utils.ts";
 import { k_means } from "../lib/kmeans.ts";
@@ -20,7 +20,12 @@ Deno.test('k_means_pp', async t => {
   ]
   const range = calc_range(d, points)
 
-  const [clusters, count] = k_means_pp(d, points, k, range)
+  const [clusters] = k_means_pp({
+    dimension: d,
+    points,
+    k,
+    range,
+  })
 
   await t.step('k === result.means', () => {
     assertEquals(clusters.length, k)
@@ -43,8 +48,16 @@ Deno.test('k_means_pp', async t => {
   const step_name = 'kmeanspp is faster than kmeans'
   await t.step(step_name, () => {
     for (let i=0; i<10; i++) {
-      const [_1, slow] = k_means(d, points, 5)
-      const [_2, fast] = k_means_pp(d, points, 5)
+      const [_1, slow] = k_means({
+        dimension: d,
+        points,
+        k: 5,
+      })
+      const [_2, fast] = k_means_pp({
+        dimension: d,
+        points,
+        k: 5,
+      })
       console.log(step_name, 'round', i, {
         slow: slow,
         fast: fast,

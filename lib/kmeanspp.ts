@@ -13,7 +13,7 @@ interface I_k_means_pp_opts {
   /** boundaries of the data space */
   range?: I_range
   /** algorithm to quantify difference of points (default to Euclidian Distance) */
-  quantify: I_quantify
+  quantify?: I_quantify
 }
 
 /**
