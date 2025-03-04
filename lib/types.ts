@@ -1,6 +1,9 @@
 export
 type I_point = number[]
 
+export
+type I_quantify = (d: number, a: I_point, b: I_point) => number
+
 /** the boundaries of the data space */
 export
 interface I_range {

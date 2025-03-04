@@ -1,20 +1,33 @@
-import type { I_cluster, I_point, I_range } from './types.ts'
+import type { I_cluster, I_point, I_quantify, I_range } from './types.ts'
 import { find_min, is_same_point, calc_squared_distance, calc_mean, calc_range } from './utils.ts'
 
+export
+interface I_k_means_opts {
+  /** the dimension of the points */
+  dimension: number
+  /** data points: Check points with `has_enough_unique_points` before. */
+  points: I_point[]
+  /** number of means */
+  k: number
+  /** boundaries of the data space */
+  range?: I_range
+  /** initial means */
+  means?: I_point[]
+  /** algorithm to quantify difference of points (default to Euclidian Distance) */
+  quantify: I_quantify
+}
+
 /**
- * @param d dimension of the points
- * @param points data points: Check points with `has_enough_unique_points` before.
- * @param k number of means
- * @param range boundaries of the data space
- * @param means initial means
+ * K-means clustering algorithm
  * @returns [the k clusters, the count of iterations]
  */
 export
-function k_means(
-  d: number, points: I_point[], k: number,
-  range: I_range = calc_range(d, points),
-  means: I_point[] = [],
-): [I_cluster[], number] {
+function k_means(opts: I_k_means_opts): [I_cluster[], number] {
+  let { dimension, points, k, range, means, quantify } = opts
+  range ??= calc_range(dimension, points)
+  means ??= []
+  quantify ??= calc_squared_distance
+
   let count = 0
   while (true) {
     count++
@@ -24,7 +37,7 @@ function k_means(
       old_means.push(random_mean(range))
 
     /* 收敛(converge)，求出新的中心点(means) */
-    const clusters = converge(d, points, old_means)
+    const clusters = converge(dimension, points, old_means, quantify)
     const new_means = clusters.map(cluster => cluster.mean)
 
     /**
@@ -34,7 +47,7 @@ function k_means(
      * 收敛之后，刚补足的 mean 就被舍弃了，
      * 此时并不能说明“不能挑出另一个 mean”
      */
-    if (is_converged(d, old_means, new_means)) // 如果已经收敛(converged)了
+    if (is_converged(dimension, old_means, new_means)) // 如果已经收敛(converged)了
       return [clusters, count]
     else
       means = new_means
@@ -42,7 +55,7 @@ function k_means(
 }
 
 /** 接收 old means，计算并返回 new means */
-function converge(d: number, points: I_point[], means: I_point[]): I_cluster[] {
+function converge(d: number, points: I_point[], means: I_point[], quantify: I_quantify): I_cluster[] {
   const map = new Map<I_point, number[]>( // mean => index
     means.map(m => [m, []])
   )
@@ -51,7 +64,7 @@ function converge(d: number, points: I_point[], means: I_point[]): I_cluster[] {
   for (let i=0; i<points.length; i++) {
     const point = points[i]
     const [shortest] = find_min(
-      means.map(mean => calc_squared_distance(d, mean, point))
+      means.map(mean => quantify(d, mean, point))
     )
     // point 于是 属于 mean。在下一步中，同属一个 mean 的 points 共同构成 cluster。
     map.get(means[shortest])!.push(i)
